@@ -179,15 +179,16 @@ proc ProcessData { line } {
                         # Only send certain notice types to Sguil
                         if { [lsearch -nocase $IGNORE_NOTICE_TYPES $note] >= 0} { return 0 }
                 }
-                14 {
+                15 {
                         # Intel log
                         lassign $fields \
-                                        timestamp uid _src_ip _src_port _dst_ip _dst_port fuid file_mime_type file_desc seen_indicator \
-                                        seen_indicator_type seen_where seen_node sources
+                                        timestamp uid _src_ip _src_port _dst_ip _dst_port seen_indicator seen_indicator_type seen_where seen_node \
+                                        matched sources fuid file_mime_type file_desc
                         # Only send intel from specified sources to Sguil
                         if { [lsearch -nocase $IGNORE_INTEL_SOURCES $sources] >= 0} { return 0 }
                 }
                 default {
+                        if {$DEBUG} { puts "Unrecognised number of fields in line: $flen"}
                         return 0
                 }
         }
@@ -240,7 +241,7 @@ proc ProcessData { line } {
                                         default { set proto 6 }
                                 }
                         }
-                        14 {
+                        15 {
                                 # Intel
                                 set seen_indicator_type [string map {:: -} $seen_indicator_type]
                                 set message "\[BRO\] $seen_indicator_type - $seen_indicator"
